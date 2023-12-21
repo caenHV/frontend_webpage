@@ -51,7 +51,7 @@ const TicketParametersForm = ({ submitQuery, ticket }) => {
         for (const [key, value] of formData) {
             formDataJSON[key] = value;
         }
-        console.log(`http://${myConfig.host}:${myConfig.port}/set_ticket/${ticket.value}`);
+        // console.log(`http://${myConfig.host}:${myConfig.port}/set_ticket/${ticket.value}`);
         fetch(`http://${myConfig.host}:${myConfig.port}/set_ticket/${ticket.value}`, {  // Enter your IP address here
             method: 'POST', 
             mode: 'cors', 
