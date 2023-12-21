@@ -1,6 +1,6 @@
 
 export const myConfig = {
-    host: { dev: "192.168.173.217", relase: "localhost" },
+    host: "192.168.173.217", // "localhost",
     port: "8000",
     chart: {
         updatetime: 20000,

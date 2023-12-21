@@ -1,3 +1,4 @@
+import { myConfig } from "./config";
 import { useState } from "react";
 import Select from 'react-select';
 import toast, { Toaster } from 'react-hot-toast';
@@ -7,7 +8,7 @@ const submitNotify = () => toast.success('Ticket is registered.');
 
 const options = [
     { value: 'Down', label: '🙅‍♀️ Down Voltage' },
-    { value: 'Set', label: '⚡ Set Voltage' }
+    { value: 'SetVoltage', label: '⚡ Set Voltage' }
 ]
 
 const TicketDropdown = ({ onChange, submitQuery }) => {
@@ -30,11 +31,11 @@ const TicketDropdown = ({ onChange, submitQuery }) => {
 };
 
 const TicketParametersSelection = ({ ticket }) => {
-    if (ticket.value === "Set") {
+    if (ticket.value === "SetVoltage") {
         return (<>
             <div className="ticketForm">
-                <label htmlFor="voltage">Enter voltage, [V]: </label>
-                <input type="text" name="voltage" id="voltage" required />
+                <label htmlFor="target_voltage">Enter voltage, [V]: </label>
+                <input type="text" name="target_voltage" id="voltage" required />
             </div>
         </>);
     }
@@ -45,10 +46,20 @@ const TicketParametersForm = ({ submitQuery, ticket }) => {
     function handleForm(e) {
         e.preventDefault();
         const formData = new FormData(e.target);
-        formData.append("ticket", ticket.value);
-        // for (const [key, value] of formData) {
-        //     console.log(`${key}: ${value}\n`);
-        // }
+        let formDataJSON = {};
+        // formData.append("ticket", ticket.value);
+        for (const [key, value] of formData) {
+            formDataJSON[key] = value;
+        }
+        console.log(`http://${myConfig.host}:${myConfig.port}/set_ticket/${ticket.value}`);
+        fetch(`http://${myConfig.host}:${myConfig.port}/set_ticket/${ticket.value}`, {  // Enter your IP address here
+            method: 'POST', 
+            mode: 'cors', 
+            headers: {
+              'Content-type': 'application/json; charset=UTF-8',
+            },
+            body: JSON.stringify(formDataJSON) // body data type must match "Content-Type" header
+        })
         submitQuery(false);
         submitNotify();
     };
@@ -57,7 +68,7 @@ const TicketParametersForm = ({ submitQuery, ticket }) => {
         return <></>;
     }
     return (<>
-        <form  onSubmit={handleForm}>
+        <form onSubmit={handleForm}>
             <TicketParametersSelection ticket={ticket} />
             <button className={"button-40"} type="submit">Submit</button>
         </form>

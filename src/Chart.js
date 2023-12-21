@@ -6,7 +6,7 @@ import CanvasJSReact from '@canvasjs/react-charts';
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 const updateInterval = myConfig.chart.updatetime;
 
-const host = myConfig.host.dev;
+const host = myConfig.host;
 let port = myConfig.port;
 
 class MulilineChart extends Component {
