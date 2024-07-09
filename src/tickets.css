@@ -22,6 +22,30 @@ div.ticketForm {
     text-align: left;
 }
 
+label.ticketInput {
+  font-size: 18px;
+}
+
+input.ticketInput {
+  border: 1px solid #000;
+  border-radius: 5px;
+  height: 40px;
+  line-height: normal;
+  color: #282828;
+  display: block;
+  width: 80%;
+  box-sizing: border-box;
+  user-select: auto;
+  font-size: 16px;
+  margin: 0 auto;
+  padding: 0 6px;
+  padding-left: 12px;
+}
+
+input.ticketInput:focus{
+  border: 2px solid #5551ff;
+}
+
 /* CSS */
 button.back {
   align-items: center;

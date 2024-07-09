@@ -3,7 +3,6 @@ import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { Grid } from "./Structure";
 
-
 function App() {
   return (
     <Grid>

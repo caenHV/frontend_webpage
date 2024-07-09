@@ -5,10 +5,11 @@ import toast, { Toaster } from 'react-hot-toast';
 import './tickets.css';
 
 const submitNotify = () => toast.success('Ticket is registered.');
+const successNotify = () => toast.success('Well done!');
 
 const options = [
-    { value: 'Down', label: '🙅‍♀️ Down Voltage' },
-    { value: 'SetVoltage', label: '⚡ Set Voltage' }
+    { value: 'down', label: '🙅‍♀️ Down Voltage' },
+    { value: 'set_voltage', label: '⚡ Set Voltage' }
 ]
 
 const TicketDropdown = ({ onChange, submitQuery }) => {
@@ -31,11 +32,11 @@ const TicketDropdown = ({ onChange, submitQuery }) => {
 };
 
 const TicketParametersSelection = ({ ticket }) => {
-    if (ticket.value === "SetVoltage") {
+    if (ticket.value === "set_voltage") {
         return (<>
             <div className="ticketForm">
-                <label htmlFor="target_voltage">Enter voltage, [V]: </label>
-                <input type="text" name="target_voltage" id="voltage" required />
+                <label className="ticketInput" htmlFor="target_voltage">Enter Voltage Multiplier: </label>
+                <input className="ticketInput" type="number" placeholder="1.0" step="0.01" min="0" max="1.1" name="target_voltage" id="voltage" required />
             </div>
         </>);
     }
@@ -47,21 +48,31 @@ const TicketParametersForm = ({ submitQuery, ticket }) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         let formDataJSON = {};
-        // formData.append("ticket", ticket.value);
+
         for (const [key, value] of formData) {
             formDataJSON[key] = value;
         }
-        // console.log(`http://${myConfig.host}:${myConfig.port}/set_ticket/${ticket.value}`);
-        fetch(`http://${myConfig.host}:${myConfig.port}/set_ticket/${ticket.value}`, {  // Enter your IP address here
-            method: 'POST', 
-            mode: 'cors', 
+
+        // submitNotify();
+        submitQuery(false);
+
+        const response = fetch(`http://${myConfig.host}:${myConfig.port}/device_backend/${ticket.value}`, {  // Enter your IP address here
+            method: 'POST',
+            mode: 'cors',
             headers: {
-              'Content-type': 'application/json; charset=UTF-8',
+                'Content-type': 'application/json; charset=UTF-8',
             },
             body: JSON.stringify(formDataJSON) // body data type must match "Content-Type" header
-        })
-        submitQuery(false);
-        submitNotify();
+        });
+        toast.promise(response, {
+            loading: `Executing ${ticket.label}: ${JSON.stringify(formDataJSON)}`,
+            success: `Success ${ticket.label}: ${JSON.stringify(formDataJSON)}`,
+            error: `Error ${ticket.label}: ${JSON.stringify(formDataJSON)}`,
+        }, {
+            style: {
+                fontSize: '18px',
+            },
+        });
     };
 
     if (ticket === null) {
