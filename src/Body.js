@@ -6,7 +6,7 @@ export function Body() {
     return (
         <div className="body">
             <TicketBlock />
-            {/* <ChartBlock /> */}
+            <ChartBlock />
         </div>
     );
 }

@@ -5,8 +5,9 @@ export function ChartBlock() {
     return (
         <>
             <div className='charts'>
-                <h2>Chart</h2>
-                <MulilineChart />
+                <h2>Charts</h2>
+                <MulilineChart ChartName="Voltage" />
+                <MulilineChart ChartName="Current" />
             </div>
         </>);
 }

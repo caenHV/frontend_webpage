@@ -4,9 +4,6 @@ import Select from 'react-select';
 import toast, { Toaster } from 'react-hot-toast';
 import './tickets.css';
 
-const submitNotify = () => toast.success('Ticket is registered.');
-const successNotify = () => toast.success('Well done!');
-
 const options = [
     { value: 'down', label: '🙅‍♀️ Down Voltage' },
     { value: 'set_voltage', label: '⚡ Set Voltage' }

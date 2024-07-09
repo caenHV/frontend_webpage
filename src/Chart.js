@@ -18,6 +18,11 @@ class MulilineChart extends Component {
 		// console.log(this.state.timestamp);
 	}
 	setOptions() {
+		let suffixY = " V";
+		if (this.props.ChartName === "Current"){
+			suffixY = " mA";
+		}
+
 		let options = {
 			zoomEnabled: true,
 			theme: "light2",
@@ -28,7 +33,7 @@ class MulilineChart extends Component {
 				title: "Time, [s]"
 			},
 			axisY: {
-				suffix: " V"
+				suffix: suffixY
 			},
 			toolTip: {
 				shared: true
@@ -36,7 +41,7 @@ class MulilineChart extends Component {
 			legend: {
 				cursor: "pointer",
 				verticalAlign: "top",
-				fontSize: 12,
+				fontSize: 10,
 				fontColor: "dimGrey",
 				itemclick: this.toggleDataSeries
 			},
@@ -72,16 +77,24 @@ class MulilineChart extends Component {
 		this.chart.render();
 	}
 	updateChart(count) {
-		fetch(`http://${host}:${port}/params?time=${this.state.timestamp}`)
+		fetch(`http://${host}:${port}/monitor/getparams?start_timestamp=${this.state.timestamp}`)
 			.then(response => response.json()).then(
 				response => {
+
+					console.log(JSON.stringify(response));
 					let timestamp = this.state.timestamp;
 					let dataP = this.state.dataP;
+					let resp = response['response']['body'];
 
-					for (const row of response.slice().reverse()) {
+					for (const row of resp.slice().reverse()) {
 						// console.log(JSON.stringify(row));
-						const { chidx, v, t } = row;
-						const prepared_point = { y: v, x: new Date(t * 1000) };
+						const { chidx, V, I, t } = row;
+						let prepared_point;
+						if (this.props.ChartName === "Current") {
+							prepared_point = { y: I, x: new Date(t * 1000) };
+						} else {
+							prepared_point = { y: V, x: new Date(t * 1000) };
+						}
 						if (dataP.has(chidx)) {
 							dataP.set(chidx, [...dataP.get(chidx), prepared_point]);
 						}
@@ -107,6 +120,7 @@ class MulilineChart extends Component {
 		const options = this.setOptions();
 		return (
 			<div>
+				<p style={{fontSize: '20pt'}}>{this.props.ChartName}</p>
 				<CanvasJSChart options={options}
 					onRef={(ref) => { this.chart = ref }}
 				/>
