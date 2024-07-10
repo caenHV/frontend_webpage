@@ -1,5 +1,9 @@
 name: release_action
-on: [push]
+on:
+  push:
+    tags:
+      - '*'
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -9,18 +13,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: latest
-      - name: Build frontend and zip it
+      - name: Build frontend
         shell: bash
         run: |
           npm install
           npm run build
-          zip -r build.zip ./build
           ls -l
-      - name: Prepare release
+      - name: Prepare zip archive for release
         uses: actions/upload-artifact@v4
         with:
-          name: my-artifact
-          path: build.zip
+          name: build
+          path: build/
           retention-days: 1
 
 
