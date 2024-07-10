@@ -1,0 +1,19 @@
+name: release_action
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: latest
+      - name: Build frontend and zip it
+        shell: bash
+        run: |
+          ls -l
+          npm install
+          npm run build
+          zip -r build.zip ./build
+
+
