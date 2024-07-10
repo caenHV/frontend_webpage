@@ -27,3 +27,16 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 ## Config
 Some parameters of the webpage can be configured with `src/config.js` file
+
+## Release process
+1. Create tag in form `vX.X` of the specific commit
+    ```bash
+    git tag -a vX.X
+    ```
+1. Push the tag on github
+    ```bash
+    git push origin --tags
+    ```
+1. Github action will be launched automatically
+1. Ensure that the action successfuly finished and download artifact
+1. Prepare new release. Attach `build.zip` file from unzipped artifact.
