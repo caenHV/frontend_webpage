@@ -81,7 +81,7 @@ class MulilineChart extends Component {
 			.then(response => response.json()).then(
 				response => {
 
-					console.log(JSON.stringify(response));
+					// console.log(JSON.stringify(response));
 					let timestamp = this.state.timestamp;
 					let dataP = this.state.dataP;
 					let resp = response['response']['body'];

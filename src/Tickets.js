@@ -60,15 +60,36 @@ const TicketParametersForm = ({ submitQuery, ticket }) => {
                 'Content-type': 'application/json; charset=UTF-8',
             },
             body: JSON.stringify(formDataJSON) // body data type must match "Content-Type" header
+        }).then(res => {
+            if (!res.ok) {
+                return res.json().then(res => {
+                    // console.log(JSON.stringify(res));
+                    if (Array.isArray(res.detail)) {
+                        const data = res.detail[0];
+                        if ('msg' in data) {
+                            throw new Error(data.msg);
+                        }
+                    }
+                    throw new Error(res.detail);
+                })
+            }
+            else {
+                return res.json();
+            }
         });
         toast.promise(response, {
             loading: `Executing ${ticket.label}: ${JSON.stringify(formDataJSON)}`,
             success: `Success ${ticket.label}: ${JSON.stringify(formDataJSON)}`,
-            error: `Error ${ticket.label}: ${JSON.stringify(formDataJSON)}`,
+            error: (err) => {
+                return `${ticket.label}: ${err.toString()}`
+            },
         }, {
             style: {
                 fontSize: '18px',
             },
+            error: {
+                duration: 5000,
+            }
         });
     };
 
