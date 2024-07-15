@@ -33,7 +33,7 @@ class MulilineChartComponent extends IdleTimerComponent {
 	setOptions() {
 		let suffixY = " V";
 		if (this.props.ChartName === "Current") {
-			suffixY = " mA";
+			suffixY = " μA";
 		}
 
 		let options = {
