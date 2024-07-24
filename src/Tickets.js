@@ -4,6 +4,8 @@ import Select from 'react-select';
 import toast, { Toaster } from 'react-hot-toast';
 import './tickets.css';
 
+const { origin } = myConfig[process.env.REACT_APP_CAEN];
+
 const options = [
     { value: 'down', label: '🙅‍♀️ Down Voltage' },
     { value: 'set_voltage', label: '⚡ Set Voltage' }
@@ -53,7 +55,7 @@ const TicketParametersForm = ({ submitQuery, ticket }) => {
         // submitNotify();
         submitQuery(false);
 
-        const response = fetch(`http://${myConfig.host}:${myConfig.port}/device_backend/${ticket.value}`, {  // Enter your IP address here
+        const response = fetch(`${origin}/device_backend/${ticket.value}`, {  // Enter your IP address here
             method: 'POST',
             mode: 'cors',
             headers: {

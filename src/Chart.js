@@ -5,10 +5,9 @@ import { withIdleTimer, IdleTimerComponent } from 'react-idle-timer'
 
 // var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
-const updateInterval = myConfig.chart.updatetime;
 
-const host = myConfig.host;
-let port = myConfig.port;
+const { origin } = myConfig[process.env.REACT_APP_CAEN];
+const { last_minutes, updatetime } = myConfig[process.env.REACT_APP_CAEN].chart
 
 class MulilineChartComponent extends IdleTimerComponent {
 	constructor(props) {
@@ -28,7 +27,7 @@ class MulilineChartComponent extends IdleTimerComponent {
 	}
 
 	getmintime() {
-		return Math.floor(Date.now() / 1000) - 60 * myConfig.chart.last_minutes;
+		return Math.floor(Date.now() / 1000) - 60 * last_minutes;
 	}
 	setOptions() {
 		let suffixY = " V";
@@ -79,7 +78,7 @@ class MulilineChartComponent extends IdleTimerComponent {
 
 	componentDidMount() {
 		this.updateChart(1);
-		setInterval(this.updateChart, updateInterval);
+		setInterval(this.updateChart, updatetime);
 	}
 	toggleDataSeries(e) {
 		if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
@@ -95,7 +94,7 @@ class MulilineChartComponent extends IdleTimerComponent {
 			this.setState({
 				timestamp: Math.max(this.state.timestamp, this.getmintime())
 			});
-			fetch(`http://${host}:${port}/monitor/getparams?start_timestamp=${this.state.timestamp}`)
+			fetch(`${origin}/monitor/getparams?start_timestamp=${this.state.timestamp}`)
 				.then(response => response.json()).then(
 					response => {
 

@@ -17,6 +17,7 @@ jobs:
         shell: bash
         run: |
           npm install
+          export REACT_APP_CAEN=production
           npm run build
           ls -l
       - name: Prepare zip archive for release
