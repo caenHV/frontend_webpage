@@ -16,7 +16,7 @@ div.badgeblock {
     align-self: center;
 }
 
-.badgegood {
+.badge {
     align-items: center;
     font-family: "Open Sans", Arial, Verdana, sans-serif;
     font-weight: bold;
@@ -33,28 +33,18 @@ div.badgeblock {
     text-overflow: ellipsis;
     line-height: 1.25rem;
     color: #595959;
-    background: #b4eda0;
 
     word-break: break-word;
 }
 
-.badgefailed {
-    align-items: center;
-    font-family: "Open Sans", Arial, Verdana, sans-serif;
-    font-weight: bold;
-    font-size: 12px;
-    display: inline-block;
-    width: auto;
+.badge.good {
+    background: #b4eda0;
+}
 
-    position: relative;
-    border-radius: 100px;
-    line-height: 1;
-    overflow: hidden;
-    padding: 0px 12px 0px 12px;
-    text-overflow: ellipsis;
-    line-height: 1.25rem;
-    color: #595959;
+.badge.warning {
+    background: #ffebb6;
+}
+
+.badge.failed {
     background: #ffd5d1;
-
-    word-break: break-word;
 }
