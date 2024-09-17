@@ -1,4 +1,11 @@
 div.charts {
     width: 80%; 
     margin: 20px auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+div.multilinechart {
+    width: 49%;
+    flex: 1 1 400px;
 }

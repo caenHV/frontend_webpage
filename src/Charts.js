@@ -9,11 +9,13 @@ export function ChartBlock() {
         <>
             <div className='charts'>
                 <MulilineChart
+                    classname="multilinechart"
                     ChartName="Voltage"
                     timeout={1000 * idle_seconds}
                     immediateEvents={['visibilitychange']}
                     startOnMount />
                 <MulilineChart
+                    classname="multilinechart"
                     ChartName="Current"
                     timeout={1000 * idle_seconds}
                     immediateEvents={['visibilitychange']}

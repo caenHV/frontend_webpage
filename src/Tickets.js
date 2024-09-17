@@ -35,7 +35,7 @@ const TicketParametersSelection = ({ ticket }) => {
         return (<>
             <div className="ticketForm">
                 <label className="ticketInput" htmlFor="target_voltage">Enter Voltage Multiplier: </label>
-                <input className="ticketInput" type="number" placeholder="1.0" step="0.01" min="0" max="1.1" name="target_voltage" id="voltage" required />
+                <input className="ticketInput" type="number" placeholder="1.0" step="0.0001" min="0" max="1.1" name="target_voltage" id="voltage" required />
             </div>
         </>);
     }
@@ -55,7 +55,7 @@ const TicketParametersForm = ({ submitQuery, ticket }) => {
         // submitNotify();
         submitQuery(false);
 
-        const response = fetch(`${origin}/device_backend/${ticket.value}`, {  // Enter your IP address here
+        const response = fetch(`${origin}/device_backend/${ticket.value}`, {
             method: 'POST',
             mode: 'cors',
             headers: {

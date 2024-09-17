@@ -63,13 +63,16 @@ class MulilineChartComponent extends IdleTimerComponent {
 		for (const [key, value] of this.state.dataP) {
 			// console.log(key);
 
-			const block = {
+			let block = {
 				type: 'line',
 				xValueFormatString: "D'th' MMMM hh:mm tt",
-				yValueFormatString: "#,##0 V",
+				yValueFormatString: "# ##0 V",
 				showInLegend: true,
 				name: `Сh ${key}`,
 				dataPoints: value
+			}
+			if (this.props.ChartName === "Current") {
+				block['yValueFormatString'] = "0.#### μA";
 			}
 			options['data'].push(block);
 		}
@@ -136,7 +139,7 @@ class MulilineChartComponent extends IdleTimerComponent {
 	render() {
 		const options = this.setOptions();
 		return (
-			<div>
+			<div class={this.props.classname}>
 				<p style={{ fontSize: '20pt' }}>{this.props.ChartName}</p>
 				<CanvasJSChart options={options}
 					onRef={(ref) => { this.chart = ref }}
