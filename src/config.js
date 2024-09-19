@@ -1,23 +1,25 @@
 export const myConfig = {
     development: {
-        origin: "http://192.168.173.217:8000", 
+        origin: "http://192.168.173.217:8000",
+        host: "192.168.173.217:8000",
+        // origin: "http://localhost:8000", 
         // "localhost", "192.168.173.217", "dq11cmd"
-        // (window.location.port ? window.location.port: '80'),
         chart: {
             updatetime: 1000,
             last_minutes: 15,
-            idle_seconds: 24 * 3600,
+            idle_seconds: 18000,
         },
         status: {
-            updatetime: 1000,
+            updatetime: 50000,
         }
     },
     production: {
         origin: window.location.origin,
+        host: window.location.host,
         chart: {
             updatetime: 1000, // update chart time (in milliseconds)
             last_minutes: 15, // chart time limit
-            idle_seconds: 24 * 3600, // after this inactive interval (in seconds) charts will not to be updated
+            idle_seconds: 1 * 3600, // after this inactive interval (in seconds) tab goes to a sleep mode
         },
         status: {
             updatetime: 10000, // update status badges time (in milliseconds)
