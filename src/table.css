@@ -24,13 +24,13 @@
 }
 
 .rc-higher {
-    background-color: #ff0000;
-    transition: background-color 15s ease-in-out;
+    background-color: #ff000008;
+    transition: background-color 1s ease-in-out;
 }
 
 .rc-lower {
-    background-color: #0000ff;
-    transition: background-color 15s ease-in-out;
+    background-color: #0000ff08;
+    transition: background-color 1s ease-in-out;
 }
 
 @media (max-width: 1250px) {

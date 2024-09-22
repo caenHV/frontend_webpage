@@ -4,12 +4,25 @@ import Select from 'react-select';
 import toast, { Toaster } from 'react-hot-toast';
 import './tickets.css';
 
-const { origin } = myConfig[process.env.REACT_APP_CAEN];
+import { DefaultButton, LoadingSpinner } from "./UtilComponents";
+import { RequestGET, RequestPOST } from "./UtilConnection";
+
+const { origin, client } = myConfig[process.env.REACT_APP_CAEN];
 
 const options = [
-    { value: 'down', label: '🙅‍♀️ Down Voltage' },
-    { value: 'set_voltage', label: '⚡ Set Voltage' }
-]
+    { value: 'down', label: '🙅‍♀️ Down Voltage', route: 'device_backend/down' },
+    { value: 'set_voltage', label: '⚡ Set Voltage', route: 'device_backend/set_voltage' },
+    { value: 'interlock', label: '🔔 Interlock', route: 'system_check/set_interlock_follow', getroute: 'system_check/is_interlock_follow' },
+];
+
+const toaster_style = {
+    style: {
+        fontSize: '18px',
+    },
+    error: {
+        duration: 5000,
+    }
+};
 
 const TicketDropdown = ({ onChange, submitQuery }) => {
     const customStyles = {
@@ -30,6 +43,7 @@ const TicketDropdown = ({ onChange, submitQuery }) => {
     </div>);
 };
 
+
 const TicketParametersSelection = ({ ticket }) => {
     if (ticket.value === "set_voltage") {
         return (<>
@@ -42,6 +56,82 @@ const TicketParametersSelection = ({ ticket }) => {
     return (<></>);
 };
 
+const TicketInterlockToggle = (route, payload, onExecute = () => { }) => {
+    const response = RequestPOSTExtend(route, payload);
+
+    const label = payload.value ? 'Turn on interlock follow' : 'Turn off ilock follow';
+    toast.promise(response, {
+        loading: `Executing: ${label}`,
+        success: `Success: ${label}`,
+        error: (err) => {
+            return `${label}: ${err.toString()}`
+        },
+    }, toaster_style);
+
+    onExecute();
+    return;
+}
+
+const TicketInterlock = ({ ticket, onExecute = () => { } }) => {
+    const [status, setStatus] = useState(null);
+    const setroute = `${origin}/${ticket.route}`;
+
+    RequestGET(`${origin}/${ticket.getroute}`, { sender: client }).then(response => (response.json())
+    ).then(response => {
+        if (response.response.statuscode !== 1)
+            setStatus('failed');
+        const ilockfollow = response.response.body.interlock_follow;
+        setStatus(() => (ilockfollow ? 'follow' : 'notfollow'));
+    }).catch(err => {
+        setStatus('failed');
+    });
+
+
+    if (status === 'failed')
+        return (<>...Something wrong...</>);
+
+    let payload = {
+        sender: client,
+        value: true,
+    }
+
+    if (status === 'follow') {
+        payload.value = false;
+        return <DefaultButton
+            text="Turn off interlock follow"
+            onClick={() => { TicketInterlockToggle(setroute, payload, onExecute) }}
+        />;
+    }
+    if (status === "notfollow") {
+        payload.value = true;
+        return <DefaultButton
+            text="Follow interlock"
+            onClick={() => { TicketInterlockToggle(setroute, payload, onExecute) }}
+        />;
+    }
+
+    return (<LoadingSpinner />);
+}
+
+const RequestPOSTExtend = (apiroute, payload) => {
+    const response = RequestPOST(apiroute, payload).then(res => {
+        if (!res.ok) {
+            return res.json().then(res => {
+                if (Array.isArray(res.detail)) {
+                    const data = res.detail[0];
+                    if ('msg' in data) {
+                        throw new Error(data.msg);
+                    }
+                }
+                throw new Error(res.detail);
+            })
+        } else {
+            return res.json();
+        }
+    });
+    return response;
+};
+
 const TicketParametersForm = ({ submitQuery, ticket }) => {
     function handleForm(e) {
         e.preventDefault();
@@ -52,56 +142,29 @@ const TicketParametersForm = ({ submitQuery, ticket }) => {
             formDataJSON[key] = value;
         }
 
-        // submitNotify();
         submitQuery(false);
 
-        const response = fetch(`${origin}/device_backend/${ticket.value}`, {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-            body: JSON.stringify(formDataJSON) // body data type must match "Content-Type" header
-        }).then(res => {
-            if (!res.ok) {
-                return res.json().then(res => {
-                    // console.log(JSON.stringify(res));
-                    if (Array.isArray(res.detail)) {
-                        const data = res.detail[0];
-                        if ('msg' in data) {
-                            throw new Error(data.msg);
-                        }
-                    }
-                    throw new Error(res.detail);
-                })
-            }
-            else {
-                return res.json();
-            }
-        });
+        const response = RequestPOSTExtend(`${origin}/${ticket.route}`, { ...formDataJSON, sender: client });
         toast.promise(response, {
             loading: `Executing ${ticket.label}: ${JSON.stringify(formDataJSON)}`,
             success: `Success ${ticket.label}: ${JSON.stringify(formDataJSON)}`,
             error: (err) => {
                 return `${ticket.label}: ${err.toString()}`
             },
-        }, {
-            style: {
-                fontSize: '18px',
-            },
-            error: {
-                duration: 5000,
-            }
-        });
+        }, toaster_style);
     };
 
+    // console.log(JSON.stringify(ticket));
     if (ticket === null) {
         return <></>;
+    }
+    if (ticket.value === 'interlock') {
+        return <TicketInterlock ticket={ticket} onExecute={() => { submitQuery(false) }} />;
     }
     return (<>
         <form onSubmit={handleForm}>
             <TicketParametersSelection ticket={ticket} />
-            <button className={"button-40"} type="submit">Submit</button>
+            <DefaultButton text="Submit" />
         </form>
     </>);
 };
@@ -122,7 +185,7 @@ function TicketBlockInside() {
     }
     return (
         <div className="newTicketButton">
-            <button className={"button-40"} onClick={() => setNew(true)}>+ New Ticket</button>
+            <DefaultButton text="+ New Ticket" onClick={() => setNew(true)} />
         </div>);
 };
 

@@ -12,12 +12,15 @@ const usePreviousValue = value => {
 };
 
 const Item = ({ value, sensitivityDiff = 0 }) => {
-    const prevVal = usePreviousValue(value);
+    const numval = parseInt(value);
+    const prevVal = usePreviousValue(numval);
     let classname = 'item';
-    if (value > prevVal * (1 + sensitivityDiff)) {
+
+    // console.log(value, numval, prevVal)
+    if (!isNaN(numval) && (numval > prevVal * (1 + sensitivityDiff))) {
         classname = `${classname} rc-higher`
     }
-    if (value < prevVal * (1 - sensitivityDiff)) {
+    if (!isNaN(numval) && (numval < prevVal * (1 - sensitivityDiff))) {
         classname = `${classname} rc-lower`
     }
 
