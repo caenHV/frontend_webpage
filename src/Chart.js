@@ -64,7 +64,7 @@ const MulilineChart = ({ data, classname, ChartName, suffixY, yaxis, yValueForma
 			}
 		});
 		setOptions(prevState => ({ ...prevState, data: datasets }));
-	}, [data, yaxis, suffixY])
+	}, [data, yaxis, suffixY, yValueFormatString])
 
 	return (
 		<div className={classname}>
