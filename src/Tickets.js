@@ -12,7 +12,7 @@ const { origin, client } = myConfig[process.env.REACT_APP_CAEN];
 const options = [
     { value: 'down', label: '🙅‍♀️ Down Voltage', route: 'device_backend/down' },
     { value: 'set_voltage', label: '⚡ Set Voltage', route: 'device_backend/set_voltage' },
-    { value: 'interlock', label: '🔔 Interlock', route: 'system_check/set_interlock_follow', getroute: 'system_check/is_interlock_follow' },
+    { value: 'interlock', label: '‍✈️ Autopilot', route: 'system_check/set_interlock_follow', getroute: 'system_check/is_interlock_follow' },
 ];
 
 const toaster_style = {
@@ -98,14 +98,14 @@ const TicketInterlock = ({ ticket, onExecute = () => { } }) => {
     if (status === 'follow') {
         payload.value = false;
         return <DefaultButton
-            text="Turn off interlock follow"
+            text="Turn off autopilot"
             onClick={() => { TicketInterlockToggle(setroute, payload, onExecute) }}
         />;
     }
     if (status === "notfollow") {
         payload.value = true;
         return <DefaultButton
-            text="Follow interlock"
+            text="Turn on autopilot"
             onClick={() => { TicketInterlockToggle(setroute, payload, onExecute) }}
         />;
     }

@@ -5,7 +5,7 @@ import './charts.css'
 import { useState, useEffect } from 'react';
 
 const { origin, host } = myConfig[process.env.REACT_APP_CAEN];
-const { last_minutes } = myConfig[process.env.REACT_APP_CAEN].chart;
+const { last_minutes, aborttime } = myConfig[process.env.REACT_APP_CAEN].chart;
 
 
 export function ChartBlock() {
@@ -17,7 +17,12 @@ export function ChartBlock() {
     // Fetch historical data
     useEffect(() => {
         const lastupd = (Math.floor(Date.now() / 1000) - 60 * last_minutes);
-        fetch(`${origin}/monitor/getparams?start_timestamp=${lastupd}`)
+
+        const controller = new AbortController();
+        const signal = controller.signal;
+        setTimeout(() => controller.abort(), aborttime);
+
+        fetch(`${origin}/monitor/getparams?start_timestamp=${lastupd}`, { signal: signal })
             .then(response => response.json()).then(
                 response => {
                     const resp = response['response']['body'];
@@ -40,7 +45,9 @@ export function ChartBlock() {
                     }
 
                 }
-            );
+            ).catch(err => {
+                setLoaded(true);
+            });
     }, [loaded]);
 
     // Subscribe to WebSocket 
@@ -59,7 +66,12 @@ export function ChartBlock() {
                     voltage: respdata[chidx]['VMon'],
                     current: respdata[chidx]['IMonH'],
                 };
-                setData(prevState => ({ ...prevState, [chidx]: [...prevState[chidx], point] }));
+                setData(prevState => {
+                    if (!(chidx in prevState)) {
+                        return { ...prevState, [chidx]: [point] };
+                    }
+                    return { ...prevState, [chidx]: [...prevState[chidx], point] };
+                });
                 setLastdata(prevState => ({ ...prevState, [chidx]: point }));
             }
         };

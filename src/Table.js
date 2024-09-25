@@ -27,13 +27,15 @@ const Item = ({ value, sensitivityDiff = 0 }) => {
     return <div className={classname}>{value}</div>
 }
 
-function TableRow({ channel, voltage, current, classname="" }) {
+function TableRow({ channel, voltage, current, classname="", parsefloat=false }) {
     const className = `item childcontainer ${classname}`;
+    const pVoltage = parsefloat ? +parseFloat(voltage).toFixed(0) : voltage;
+    const pCurrent = parsefloat ? +parseFloat(current).toFixed(1) : current;
     return (
         <div className={className}>
             <Item value={<b>{channel}</b>} />
-            <Item value={voltage} sensitivityDiff={0.01}/>
-            <Item value={current} sensitivityDiff={0.01}/>
+            <Item value={pVoltage} sensitivityDiff={0.01}/>
+            <Item value={pCurrent} sensitivityDiff={0.01}/>
         </div>
     );
 }
@@ -63,7 +65,7 @@ export function SystemStateTable({ datarows }) {
 
                 Object.keys(datarows).sort(collator.compare).map((key) =>
                     <TableRow key={key}
-                        channel={key} voltage={datarows[key].voltage} current={datarows[key].current} />)
+                        channel={key} voltage={datarows[key].voltage} current={datarows[key].current} parsefloat={true} />)
             }
         </div>
     </>);

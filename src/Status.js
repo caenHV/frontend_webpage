@@ -90,10 +90,10 @@ const StatusBadgeSysCheck = () => {
 };
 
 const StatusBadgeILockFollow = () => {
-    const title = "Interlock";
+    const title = "Autopilot";
     const comments = {
-        good: "FLW",
-        warning: "NO FLW",
+        good: "ON",
+        warning: "OFF",
         failed: "...",
     };
     const [badgestatus, setStatus] = useState('failed');
