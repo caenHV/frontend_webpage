@@ -59,7 +59,7 @@ const TicketParametersSelection = ({ ticket }) => {
 const TicketInterlockToggle = (route, payload, onExecute = () => { }) => {
     const response = RequestPOSTExtend(route, payload);
 
-    const label = payload.value ? 'Turn on interlock follow' : 'Turn off ilock follow';
+    const label = payload.value ? 'Turn on autopilot' : 'Turn off autopilot';
     toast.promise(response, {
         loading: `Executing: ${label}`,
         success: `Success: ${label}`,

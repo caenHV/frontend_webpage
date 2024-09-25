@@ -16,7 +16,7 @@ const { last_minutes } = myConfig[process.env.REACT_APP_CAEN].chart;
 
 const mintime = () => { return new Date((Math.floor(Date.now() / 1000) - 60 * last_minutes) * 1000); };
 
-const MulilineChart = ({ data, classname, ChartName, suffixY, yaxis }) => {
+const MulilineChart = ({ data, classname, ChartName, suffixY, yaxis, yValueFormatString }) => {
 	const [options, setOptions] = useState({
 		culture: "ru",
 		zoomEnabled: true,
@@ -51,7 +51,7 @@ const MulilineChart = ({ data, classname, ChartName, suffixY, yaxis }) => {
 			return {
 				type: 'line',
 				xValueFormatString: "D'th' MMMM hh:mm tt",
-				yValueFormatString: `# ##0 ${suffixY}`,
+				yValueFormatString: yValueFormatString,
 				showInLegend: true,
 				name: `Сh ${key}`,
 				markerType: 'none',

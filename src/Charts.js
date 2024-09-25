@@ -85,6 +85,7 @@ export function ChartBlock() {
                     yaxis="voltage"
                     ChartName="Voltage"
                     suffixY="V"
+                    yValueFormatString="# ##0 V"
                     data={data} />
                 <MulilineChart
                     classname="multilinechart"
@@ -92,6 +93,7 @@ export function ChartBlock() {
                     ChartName="Current"
                     data={data}
                     suffixY="μA"
+                    yValueFormatString="# ##0.#0 μA"
                     startOnMount />
             </div>
             <div className='table'>
