@@ -10,9 +10,9 @@ import { RequestGET, RequestPOST } from "./UtilConnection";
 const { origin, client } = myConfig[process.env.REACT_APP_CAEN];
 
 const options = [
+    { value: 'autopilot', label: '‍✈️ Autopilot', route: 'system_check/set_interlock_follow', getroute: 'system_check/is_interlock_follow' },
     { value: 'down', label: '🙅‍♀️ Down Voltage', route: 'device_backend/down' },
     { value: 'set_voltage', label: '⚡ Set Voltage', route: 'device_backend/set_voltage' },
-    { value: 'interlock', label: '‍✈️ Autopilot', route: 'system_check/set_interlock_follow', getroute: 'system_check/is_interlock_follow' },
 ];
 
 const toaster_style = {
@@ -52,7 +52,7 @@ const TicketParametersSelection = ({ ticket }) => {
                 <input className="ticketInput" type="number" placeholder="1.0" step="0.0001" min="0" max="1.1" name="target_voltage" id="voltage" required />
             </div>
         </>);
-    }
+    };
     return (<></>);
 };
 
@@ -92,6 +92,7 @@ const TicketInterlock = ({ ticket, onExecute = () => { } }) => {
 
     let payload = {
         sender: client,
+        target_voltage: 0,
         value: true,
     }
 
@@ -103,11 +104,27 @@ const TicketInterlock = ({ ticket, onExecute = () => { } }) => {
         />;
     }
     if (status === "notfollow") {
-        payload.value = true;
-        return <DefaultButton
-            text="Turn on autopilot"
-            onClick={() => { TicketInterlockToggle(setroute, payload, onExecute) }}
-        />;
+        return (<>
+            <form onSubmit={(e) => {
+                e.preventDefault();
+
+                const formData = new FormData(e.target);
+                for (const [key, value] of formData) {
+                    payload[key] = value;
+                }
+
+                TicketInterlockToggle(setroute, { ...payload, value: true }, onExecute);
+
+            }}>
+                <div className="ticketForm">
+                    <label className="ticketInput" htmlFor="target_voltage">Enter Tagret Voltage Multiplier: </label>
+                    <input className="ticketInput" type="number" placeholder="1.0" step="0.0001" min="0" max="1.1" name="target_voltage" id="voltage" required />
+                </div>
+                <DefaultButton
+                    text="Turn on autopilot"
+                />
+            </form>
+        </>);
     }
 
     return (<LoadingSpinner />);
@@ -158,7 +175,7 @@ const TicketParametersForm = ({ submitQuery, ticket }) => {
     if (ticket === null) {
         return <></>;
     }
-    if (ticket.value === 'interlock') {
+    if (ticket.value === 'autopilot') {
         return <TicketInterlock ticket={ticket} onExecute={() => { submitQuery(false) }} />;
     }
     return (<>

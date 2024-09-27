@@ -4,13 +4,14 @@ import { SystemStateTable } from './Table.js';
 import './charts.css'
 import { useState, useEffect } from 'react';
 
-const { origin, host } = myConfig[process.env.REACT_APP_CAEN];
+const { origin } = myConfig[process.env.REACT_APP_CAEN];
 const { last_minutes, aborttime } = myConfig[process.env.REACT_APP_CAEN].chart;
 
 
 export function ChartBlock() {
 
     const [data, setData] = useState({});
+    const [target, setTarget] = useState("...");
     const [loaded, setLoaded] = useState(false);
     const [lastdata, setLastdata] = useState({});
 
@@ -50,14 +51,14 @@ export function ChartBlock() {
             });
     }, [loaded]);
 
-    // Subscribe to WebSocket 
+    // Subscribe to Server sent events 
     useEffect(() => {
         if (!loaded)
             return;
 
-        const WS = new WebSocket(`ws://${host}/device_backend/ws`);
-        WS.onmessage = (event) => {
-            const response = JSON.parse(event.data);
+        const sse = new EventSource(`${origin}/device_backend/params_broadcast`);
+        sse.onmessage = (event) => {
+            const response = JSON.parse(event.data).response;
             const timestamp = response.timestamp;
             const respdata = Object(response['body']['params']);
             for (const chidx of Object.keys(respdata)) {
@@ -73,8 +74,14 @@ export function ChartBlock() {
                     return { ...prevState, [chidx]: [...prevState[chidx], point] };
                 });
                 setLastdata(prevState => ({ ...prevState, [chidx]: point }));
+
+                const { VSet, VDef } = respdata[chidx];
+                if (VDef > 0) {
+                    setTarget(+(VSet / VDef).toFixed(3));
+                }
             }
         };
+        return () => {sse.close()};
     }, [loaded]);
 
     return (
@@ -83,7 +90,7 @@ export function ChartBlock() {
                 <MulilineChart
                     classname="multilinechart"
                     yaxis="voltage"
-                    ChartName="Voltage"
+                    ChartName={`Voltage (multiplier now: ${target})`}
                     suffixY="V"
                     yValueFormatString="# ##0 V"
                     data={data} />
@@ -93,7 +100,7 @@ export function ChartBlock() {
                     ChartName="Current"
                     data={data}
                     suffixY="μA"
-                    yValueFormatString="# ##0.#0 μA"
+                    yValueFormatString="# ##0.###0 μA"
                     startOnMount />
             </div>
             <div className='table'>

@@ -2,10 +2,10 @@ import browserSignature from 'browser-signature';
 
 export const myConfig = {
     development: {
-        // origin: "http://192.168.173.217:8000",
-        // host: "192.168.173.217:8000",
-        origin: "http://localhost:8000", 
-        host: "localhost:8000",
+        origin: "http://192.168.173.217:8000",
+        host: "192.168.173.217:8000",
+        // origin: "http://localhost:8000", 
+        // host: "localhost:8000",
         // "localhost", "192.168.173.217", "dq11cmd"
         client: browserSignature().slice(0, 10),
         chart: {

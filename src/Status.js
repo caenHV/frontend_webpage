@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { myConfig } from './config';
 import './status.css'
 
-const { origin, client } = myConfig[process.env.REACT_APP_CAEN];
-const { updatetime, aborttime } = myConfig[process.env.REACT_APP_CAEN].status;
+const { origin } = myConfig[process.env.REACT_APP_CAEN];
 
 
 const badgecolors = {
@@ -12,131 +11,109 @@ const badgecolors = {
     warning: "#ffebb6",
 }
 
-const badgecomments = {
-    good: "OK",
-    failed: "FAIL",
-    warning: "..."
-};
-
-function StatusBadge({ name, apiroute }) {
-    const [badgestatus, setStatus] = useState('good');
-    const apirequest = (apiroute) => {
-        const controller = new AbortController();
-        const signal = controller.signal;
-        setTimeout(() => controller.abort(), aborttime);
-
-        fetch(`${origin}/${apiroute}/status?` + new URLSearchParams({
-            sender: client,
-        }).toString(), { signal: signal }
-        ).then(response => {
-            setStatus(() => (response.ok ? 'good' : 'failed'));
-        }).catch(err => {
-            setStatus('failed');
-        });
-    };
-
-    useEffect(() => {
-        apirequest(apiroute);
-        const interval = setInterval(() => { apirequest(apiroute) }, updatetime);
-        return () => clearInterval(interval);
-    }, [apiroute]);
-
-    const badgecomment = `${name}: ${badgecomments[badgestatus]}`;
-    return (
-        <StatusBadgeDiv title={badgecomment} background={badgecolors[badgestatus]} />
-    );
-}
-
 function StatusBadgeDiv({ title, background }) {
     return (<div>
         <span className="badge" style={{ background: background }}>{title}</span>
     </div>);
 }
 
-const StatusBadgeSysCheck = () => {
-    const title = "SysCheck";
-    const [badgestatus, setStatus] = useState('good');
-    const apiroute = 'system_check/last_check';
-
-    const apirequest = (apiroute) => {
-        const controller = new AbortController();
-        const signal = controller.signal;
-        setTimeout(() => controller.abort(), aborttime);
-
-        fetch(`${origin}/${apiroute}?` + new URLSearchParams({
-            sender: client,
-        }).toString(), { signal: signal }
-        ).then(response => (response.json())
-        ).then(response => {
-            if (response.response.statuscode !== 1) {
-                setStatus('failed');
-                return;
-            }
-            const answer = response.response;
-            setStatus(() => (parseInt(answer.timestamp) - parseInt(answer.body.last_check) < 30 ? 'good' : 'failed'));
-        }).catch(err => {
-            setStatus('failed');
-        });
-    };
-
-    useEffect(() => {
-        apirequest(apiroute);
-        const interval = setInterval(() => { apirequest(apiroute) }, updatetime);
-        return () => clearInterval(interval);
-    }, [apiroute]);
-
-    const comment = badgecomments[badgestatus];
-    return (<StatusBadgeDiv title={`${title}: ${comment}`} background={badgecolors[badgestatus]} />);
-};
-
-const StatusBadgeILockFollow = () => {
-    const title = "Autopilot";
-    const comments = {
-        good: "ON",
-        warning: "OFF",
-        failed: "...",
-    };
-    const [badgestatus, setStatus] = useState('failed');
-    const apiroute = 'system_check/is_interlock_follow';
-
-    const apirequest = (apiroute) => {
-        const controller = new AbortController();
-        const signal = controller.signal;
-        setTimeout(() => controller.abort(), aborttime);
-
-        fetch(`${origin}/${apiroute}?` + new URLSearchParams({
-            sender: client,
-        }).toString(), { signal: signal }
-        ).then(response => (response.json())
-        ).then(response => {
-            if (response.response.statuscode !== 1) {
-                setStatus('failed');
-                return;
-            }
-            const ilockfollow = response.response.body.interlock_follow;
-            setStatus(() => (ilockfollow ? 'good' : 'warning'));
-        }).catch(err => {
-            setStatus('failed');
-        });
-    };
-
-    useEffect(() => {
-        apirequest(apiroute);
-        const interval = setInterval(() => { apirequest(apiroute) }, updatetime);
-        return () => clearInterval(interval);
-    }, [apiroute]);
-
-    const comment = comments[badgestatus];
-    return (<StatusBadgeDiv title={`${title}: ${comment}`} background={badgecolors[badgestatus]} />);
-};
-
 export function StatusBlock() {
+
+    const [status, setStatus] = useState({
+        device: {
+            title: "Device ...",
+            background: badgecolors.warning,
+        },
+        monitor: {
+            title: "Monitor ...",
+            background: badgecolors.warning,
+        },
+        syscheck: {
+            title: "System check ...",
+            background: badgecolors.warning,
+        },
+        autopilot: {
+            title: "Autopilot ...",
+            background: badgecolors.warning,
+        },
+    });
+
+    // Watch on status of the system
+    useEffect(() => {
+        const sse_devstatus = new EventSource(`${origin}/events/status`);
+        sse_devstatus.onmessage = (event) => {
+            const response = JSON.parse(event.data);
+
+            // console.log(JSON.stringify(response));
+            const isgood_devback = (parseInt(response.device_backend.statuscode) === 1);
+            const isgood_monitor = (parseInt(response.monitor.statuscode) === 1);
+            const isgood_syscheck = (parseInt(response.system_check.statuscode) === 1);
+            
+            const get_autopilot_state = (response) => {
+                const data = Object(response.body);
+                if (!("autopilot" in data)) {
+                    return {
+                        title: "Autopilot: ...",
+                        background: badgecolors.failed,
+                    };
+                }
+                const isenable = data.autopilot.enable;
+                return {
+                    title: `Autopilot: ${isenable ? "ON" : "OFF"}`,
+                    background: isenable ? badgecolors.good : badgecolors.warning,
+                };
+            };
+
+            const state = {
+                device: {
+                    title: `Device: ${isgood_devback ? "OK" : "FAIL"}`,
+                    background: isgood_devback ? badgecolors.good : badgecolors.failed,
+                },
+                monitor: {
+                    title: `Monitor: ${isgood_monitor ? "OK" : "FAIL"}`,
+                    background: isgood_monitor ? badgecolors.good : badgecolors.failed,
+                },
+                syscheck: {
+                    title: `System check: ${isgood_syscheck ? "OK" : "FAIL"}`,
+                    background: isgood_syscheck ? badgecolors.good : badgecolors.failed,
+                },
+                autopilot: get_autopilot_state(response.system_check),
+            }
+
+            setStatus(state);
+        };
+
+        sse_devstatus.onerror = (event) => {
+            setStatus({
+                device: {
+                    title: "Device: no connect",
+                    background: badgecolors.failed,
+                },
+                monitor: {
+                    title: "Monitor: no connect",
+                    background: badgecolors.failed,
+                },
+                syscheck: {
+                    title: "System check: no connect",
+                    background: badgecolors.failed,
+                },
+                autopilot: {
+                    title: "Autopilot: no connect",
+                    background: badgecolors.failed,
+                },
+            });
+        }
+
+        return () => (sse_devstatus.close());
+    }, []);
+    
+
     return (
         <div className="statusbody">
-            <StatusBadge name="Device" apiroute="device_backend" />
-            <StatusBadge name="Monitor" apiroute="monitor" />
-            <StatusBadgeSysCheck />
-            <StatusBadgeILockFollow />
+            <StatusBadgeDiv title={status.device.title} background={status.device.background} />
+            <StatusBadgeDiv title={status.monitor.title} background={status.monitor.background} />
+            <StatusBadgeDiv title={status.syscheck.title} background={status.syscheck.background} />
+            <StatusBadgeDiv title={status.autopilot.title} background={status.autopilot.background} />
         </div>
     );
 }

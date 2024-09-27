@@ -27,15 +27,15 @@ const Item = ({ value, sensitivityDiff = 0 }) => {
     return <div className={classname}>{value}</div>
 }
 
-function TableRow({ channel, voltage, current, classname="", parsefloat=false }) {
+function TableRow({ channel, voltage, current, classname = "", parsefloat = false }) {
     const className = `item childcontainer ${classname}`;
     const pVoltage = parsefloat ? +parseFloat(voltage).toFixed(0) : voltage;
-    const pCurrent = parsefloat ? +parseFloat(current).toFixed(1) : current;
+    const pCurrent = parsefloat ? +parseFloat(current).toFixed(3) : current;
     return (
         <div className={className}>
             <Item value={<b>{channel}</b>} />
-            <Item value={pVoltage} sensitivityDiff={0.01}/>
-            <Item value={pCurrent} sensitivityDiff={0.01}/>
+            <Item value={pVoltage} sensitivityDiff={0.01} />
+            <Item value={pCurrent} sensitivityDiff={0.01} />
         </div>
     );
 }

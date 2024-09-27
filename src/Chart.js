@@ -20,6 +20,7 @@ const MulilineChart = ({ data, classname, ChartName, suffixY, yaxis, yValueForma
 	const [options, setOptions] = useState({
 		culture: "ru",
 		zoomEnabled: true,
+		zoomType: 'xy',
 		animationEnabled: false,
 		theme: "light2",
 		axisX: {
