@@ -77,7 +77,7 @@ export function ChartBlock() {
 
                 const { VSet, VDef } = respdata[chidx];
                 if (VDef > 0) {
-                    setTarget(+(VSet / VDef).toFixed(3));
+                    setTarget(+(VSet / VDef).toFixed(4));
                 }
             }
         };
