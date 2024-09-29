@@ -62,10 +62,11 @@ export function ChartBlock() {
             const timestamp = response.timestamp;
             const respdata = Object(response['body']['params']);
             for (const chidx of Object.keys(respdata)) {
+                const imon_key = (respdata[chidx]['ImonRange'] === 0) ? "IMonH" : "IMonL";
                 const point = {
                     time: new Date(timestamp * 1000),
                     voltage: respdata[chidx]['VMon'],
-                    current: respdata[chidx]['IMonH'],
+                    current: respdata[chidx][imon_key],
                 };
                 setData(prevState => {
                     if (!(chidx in prevState)) {
