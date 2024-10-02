@@ -23,6 +23,11 @@
     width: 100%;
 }
 
+.item .wrong {
+    background-color: #eb606075;
+    transition: background-color 0.1s ease-in-out;
+}
+
 .rc-higher {
     background-color: #ff000008;
     transition: background-color 1s ease-in-out;

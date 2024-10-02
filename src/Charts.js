@@ -74,7 +74,7 @@ export function ChartBlock() {
                     }
                     return { ...prevState, [chidx]: [...prevState[chidx], point] };
                 });
-                setLastdata(prevState => ({ ...prevState, [chidx]: point }));
+                setLastdata(prevState => ({ ...prevState, [chidx]: { ...point, status: respdata[chidx]['ChStatus'] } }));
 
                 const { VSet, VDef } = respdata[chidx];
                 if (VDef > 0) {
@@ -82,7 +82,7 @@ export function ChartBlock() {
                 }
             }
         };
-        return () => {sse.close()};
+        return () => { sse.close() };
     }, [loaded]);
 
     return (

@@ -12,7 +12,7 @@ const usePreviousValue = value => {
 };
 
 const Item = ({ value, sensitivityDiff = 0 }) => {
-    const numval = parseInt(value);
+    const numval = parseFloat(value);
     const prevVal = usePreviousValue(numval);
     let classname = 'item';
 
@@ -27,15 +27,28 @@ const Item = ({ value, sensitivityDiff = 0 }) => {
     return <div className={classname}>{value}</div>
 }
 
-function TableRow({ channel, voltage, current, classname = "", parsefloat = false }) {
+const ItemStatus = ({ value }) => {
+    const numval = parseInt(value);
+    let classname = 'item';
+
+    if (!isNaN(numval) && (numval >= 8 )) {
+        classname = `${classname} wrong`;
+    }
+
+    return <div className={classname}>{value}</div>
+}
+
+function TableRow({ channel, voltage, current, status, classname = "", parsefloat = false }) {
     const className = `item childcontainer ${classname}`;
     const pVoltage = parsefloat ? +parseFloat(voltage).toFixed(0) : voltage;
     const pCurrent = parsefloat ? +parseFloat(current).toFixed(3) : current;
+    const pStatus = parsefloat ? parseInt(status) : status;
     return (
         <div className={className}>
             <Item value={<b>{channel}</b>} />
             <Item value={pVoltage} sensitivityDiff={0.01} />
             <Item value={pCurrent} sensitivityDiff={0.01} />
+            <ItemStatus value={pStatus} />
         </div>
     );
 }
@@ -45,6 +58,7 @@ function TableHeaders() {
         channel={<b>Channel</b>}
         voltage={<b>Voltage, [V]</b>}
         current={<b>Current, [μA]</b>}
+        status={<b>Status</b>}
         classname="header"
     />
 }
@@ -64,8 +78,10 @@ export function SystemStateTable({ datarows }) {
             {
 
                 Object.keys(datarows).sort(collator.compare).map((key) =>
-                    <TableRow key={key}
-                        channel={key} voltage={datarows[key].voltage} current={datarows[key].current} parsefloat={true} />)
+                    <TableRow 
+                        key={key} channel={key} voltage={datarows[key].voltage} 
+                        current={datarows[key].current} status={datarows[key].status} 
+                    parsefloat={true} />)
             }
         </div>
     </>);
