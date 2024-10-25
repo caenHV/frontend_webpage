@@ -1,4 +1,4 @@
-import { myConfig } from './config';
+import { myConfig } from '../config';
 import React, { useEffect, useState } from 'react';
 import CanvasJSReact from '@canvasjs/react-charts';
 

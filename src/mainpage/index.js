@@ -2,14 +2,14 @@ import { Body } from "./Body";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
 import { Grid } from "./Structure";
-import { myConfig } from "./config";
+import { myConfig } from "../config";
 import { useIdleTimer } from 'react-idle-timer'
 import { useState } from 'react';
 import './app.css';
 
 const { idle_seconds } = myConfig[process.env.REACT_APP_CAEN].chart;
 
-function App() {
+function MainPage() {
   const [state, setState] = useState('Active');
 
   const onIdle = () => {
@@ -42,4 +42,4 @@ function App() {
   );
 }
 
-export default App;
+export default MainPage;

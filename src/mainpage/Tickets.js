@@ -1,11 +1,11 @@
-import { myConfig } from "./config";
+import { myConfig } from "../config";
 import { useState } from "react";
 import Select from 'react-select';
 import toast, { Toaster } from 'react-hot-toast';
 import './tickets.css';
 
-import { DefaultButton, LoadingSpinner } from "./UtilComponents";
-import { RequestGET, RequestPOST } from "./UtilConnection";
+import { DefaultButton, LoadingSpinner } from "../utils/UtilComponents";
+import { RequestGET, RequestPOST } from "../utils/UtilConnection";
 
 const { origin, client } = myConfig[process.env.REACT_APP_CAEN];
 

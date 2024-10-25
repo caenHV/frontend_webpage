@@ -1,4 +1,4 @@
-import { myConfig } from './config';
+import { myConfig } from '../config';
 import { MulilineChart } from './Chart.js'
 import { SystemStateTable } from './Table.js';
 import './charts.css'

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { myConfig } from './config';
+import { myConfig } from '../config';
 import './status.css'
 
 const { origin } = myConfig[process.env.REACT_APP_CAEN];
@@ -11,9 +11,10 @@ const badgecolors = {
     warning: "#ffebb6",
 }
 
-function StatusBadgeDiv({ title, background }) {
+function StatusBadgeDiv({ title, background, border = false }) {
+    const border_style = border ? `1px black solid` : `1px ${background} solid`
     return (<div>
-        <span className="badge" style={{ background: background }}>{title}</span>
+        <span className="badge" style={{ background: background, border: border_style }}>{title}</span>
     </div>);
 }
 
@@ -106,14 +107,14 @@ export function StatusBlock() {
 
         return () => (sse_devstatus.close());
     }, []);
-    
 
     return (
         <div className="statusbody">
             <StatusBadgeDiv title={status.device.title} background={status.device.background} />
-            <StatusBadgeDiv title={status.monitor.title} background={status.monitor.background} />
             <StatusBadgeDiv title={status.syscheck.title} background={status.syscheck.background} />
+            <StatusBadgeDiv title={status.monitor.title} background={status.monitor.background} />
             <StatusBadgeDiv title={status.autopilot.title} background={status.autopilot.background} />
+            <StatusBadgeDiv title={<a href='/log'>Log page</a>} background="#ffffff" border={true} />
         </div>
     );
 }
