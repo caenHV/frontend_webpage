@@ -51,7 +51,7 @@ const MulilineChart = ({ data, classname, ChartName, suffixY, yaxis, yValueForma
 			const datapoints = data[key];
 			return {
 				type: 'line',
-				xValueFormatString: "D'th' MMMM hh:mm tt",
+				xValueFormatString: "HH:mm:ss",
 				yValueFormatString: yValueFormatString,
 				showInLegend: true,
 				name: `Сh ${key}`,
