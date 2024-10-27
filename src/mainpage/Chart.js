@@ -51,7 +51,7 @@ const MulilineChart = ({ data, classname, ChartName, suffixY, yaxis, yValueForma
 			const datapoints = data[key];
 			return {
 				type: 'line',
-				xValueFormatString: "D'th' MMMM hh:mm tt",
+				xValueFormatString: "DD MMM HH:mm:ss",
 				yValueFormatString: yValueFormatString,
 				showInLegend: true,
 				name: `Сh ${key}`,
@@ -64,7 +64,7 @@ const MulilineChart = ({ data, classname, ChartName, suffixY, yaxis, yValueForma
 				}),
 			}
 		});
-		setOptions(prevState => ({ ...prevState, data: datasets }));
+		setOptions(prevState => ({ ...prevState, data: datasets, axisX: {...prevState.axisX, minimum: mintime()} }));
 	}, [data, yaxis, suffixY, yValueFormatString])
 
 	return (

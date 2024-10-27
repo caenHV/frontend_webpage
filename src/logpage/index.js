@@ -43,7 +43,12 @@ const PreparedLogRow = ({timestamp, message, importance}) => {
 
 const LogTable = ({data}) => {
     
-    return (<table className={styles.table}>
+    const current_date = new Date();
+    const date_str = current_date.toLocaleDateString("ru-RU");
+    const time_str = current_date.toLocaleTimeString("ru-RU");
+    return (<>
+    <h3>Table received on {date_str} at {time_str}</h3>
+    <table className={styles.table}>
         <thead>
             <LogCols timestamp="Timestamp" message="Message" />
         </thead>
@@ -52,7 +57,8 @@ const LogTable = ({data}) => {
             <PreparedLogRow timestamp={x.t} message={x.description} importance={x.is_ok} key={i}/>
         )}
         </tbody>
-    </table>)
+    </table>
+    </>);
 }
 
 export default function LogPage() {
