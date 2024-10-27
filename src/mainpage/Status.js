@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { clickScreen } from './Screen';
 import { myConfig } from '../config';
 import './status.css'
 
@@ -108,13 +109,16 @@ export function StatusBlock() {
         return () => (sse_devstatus.close());
     }, []);
 
-    return (
+    return (<div>
         <div className="statusbody">
             <StatusBadgeDiv title={status.device.title} background={status.device.background} />
             <StatusBadgeDiv title={status.syscheck.title} background={status.syscheck.background} />
             <StatusBadgeDiv title={status.monitor.title} background={status.monitor.background} />
             <StatusBadgeDiv title={status.autopilot.title} background={status.autopilot.background} />
-            <StatusBadgeDiv title={<a href='/log'>Log page</a>} background="#ffffff" border={true} />
         </div>
-    );
+        <div className="statusbody">
+            <StatusBadgeDiv title={<a href='/log'>Log page</a>} background="#ffffff" border={true} />
+            <StatusBadgeDiv title={<a href="#" onClick={()=>{clickScreen()}}>Screenshot</a>} background="#ffffff" border={true} />
+        </div>
+    </div>);
 }

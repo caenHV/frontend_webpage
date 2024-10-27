@@ -7,11 +7,11 @@ export const myConfig = {
         // origin: "http://localhost:8000", 
         // host: "localhost:8000",
         // "localhost", "192.168.173.217", "dq11cmd"
-        client: browserSignature().slice(0, 10),
+        client: browserSignature().slice(-11, -2),
         chart: {
             updatetime: 1000,
-            last_minutes: 15,
-            idle_seconds: 18000,
+            last_minutes: 30,
+            idle_seconds: 3600,
             aborttime: 4000,
         },
         status: {
@@ -22,11 +22,11 @@ export const myConfig = {
     production: {
         origin: window.location.origin,
         host: window.location.host,
-        client: browserSignature().slice(0, 10),
+        client: browserSignature().slice(-11, -2),
         chart: {
             updatetime: 1000, // update chart time (in milliseconds)
-            last_minutes: 15, // chart time limit
-            idle_seconds: 18000, // after this inactive interval (in seconds) tab goes to a sleep mode
+            last_minutes: 30, // chart time limit
+            idle_seconds: 3600, // after this inactive interval (in seconds) tab goes to a sleep mode
             aborttime: 4000, // abort time for request if monitor is not answered (in milliseconds)
         },
         status: {
