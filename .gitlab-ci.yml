@@ -1,3 +1,7 @@
+stages:
+  - build
+  - release
+
 build:
   image: node:22.11
   stage: build
@@ -8,13 +12,35 @@ build:
       npm install
       export REACT_APP_CAEN=production
       npm run build
-      ls -l 
+      ls -l
   artifacts:
     name: "frontend_build"
     paths:
       - build/
     expire_in: 1 day 
+
+release_job:
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  stage: release
+  needs:
+    - job: build
+      artifacts: true
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - ls -l
+    - echo $CI_JOB_URL
+  artifacts:
+    name: "frontend_build"
+    paths:
+      - build/
+    expire_in: never
   release:
     tag_name: $CI_COMMIT_TAG
     name: 'Release $CI_COMMIT_TAG'
     description: 'Auto release with Gitlab CI'
+    assets:
+        links:
+          - name: "frontend_build.zip"
+            url: "$CI_JOB_URL/artifacts/download"
+
