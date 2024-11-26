@@ -17,7 +17,7 @@ build:
       export REACT_APP_CAEN=production
       npm run build
       ls -lh
-    - echo "VERSION=$CI_COMMIT_TAG" > build.env
+    - echo "VERSION=$CI_COMMIT_TAG" >> build.env
   artifacts:
     name: "frontend_build"
     paths:
@@ -29,27 +29,42 @@ build:
 upload:
   image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/alpine/curl:8.9.1
   stage: upload
-  needs: ['build']
+  dependencies:
+    - build
+  rules:
+    - if: $CI_COMMIT_TAG
+  before_script:
+    - apk add jq
   script:
     - ls -lh
     - tar -cvzf build.tar.gz build/
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file build.tar.gz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE_NAME}/${VERSION}/build.tar.gz"'
-
+    - PACKAGE_ID=$(curl --header "JOB-TOKEN:$CI_JOB_TOKEN" --upload-file build.tar.gz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE_NAME}/${VERSION}/build.tar.gz?select=package_file"| jq '.package_id')
+    - PACKAGE_LINK="https://git.inp.nsk.su/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME/-/packages/$PACKAGE_ID"
+    - echo "Package URL:\ $PACKAGE_LINK"
+    - echo "VERSION=$VERSION" >> build.env
+    - echo "PACKAGE_LINK=$PACKAGE_LINK" >> build.env
+    - cat build.env
+  artifacts:
+    reports:
+      dotenv: build.env
 
 release_job:
-  image: ${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX}/registry.gitlab.com/gitlab-org/release-cli:latest
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
   stage: release
-  needs: ['upload']
+  dependencies:
+    - upload
   rules:
     - if: $CI_COMMIT_TAG
   script:
     - ls -l
+    - API_LINK="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE_NAME}/${VERSION}/build.tar.gz"
+    - echo -en "Auto release with Gitlab CI/CD\napi_link ${API_LINK}" > description.md
   release:
     tag_name: $CI_COMMIT_TAG
     name: 'Release $CI_COMMIT_TAG'
-    description: 'Auto release with Gitlab CI'
+    description: './description.md'
     assets:
         links:
-          - name: "build.tar.gz"
-            url: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE_NAME}/${VERSION}/build.tar.gz"
+          - name: "build package"
+            url: "${PACKAGE_LINK}"
 
