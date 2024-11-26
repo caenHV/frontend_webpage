@@ -6,7 +6,6 @@ export const myConfig = {
         host: "192.168.173.217:8000",
         // origin: "http://localhost:8000", 
         // host: "localhost:8000",
-        // "localhost", "192.168.173.217", "dq11cmd"
         client: browserSignature().slice(-11, -2),
         chart: {
             updatetime: 1000,
