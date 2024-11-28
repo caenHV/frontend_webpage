@@ -1,0 +1,64 @@
+.structure {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.h1 {
+    text-align: center;
+}
+
+.p {
+    max-width: 800px;
+    font-size: 14pt;
+    padding-left: min(50px, 5%);
+}
+
+.loading {
+    width: 80px;
+    margin: 0 auto;
+}
+
+
+.ticketForm {
+    margin: 20px auto;
+    width: 100%;
+    max-width: 350px;
+    text-align: left;
+    /* display: flex;
+    align-items: center; */
+    padding-left: min(50px, 5%);
+}
+
+.labelTicketInput {
+    font-size: 18pt;
+}
+
+.ticketInput {
+    border: 1px solid #000;
+    border-radius: 5px;
+    height: 50px;
+    line-height: normal;
+    color: #282828;
+    display: block;
+    width: 80%;
+    box-sizing: border-box;
+    user-select: auto;
+    font-size: 18px;
+    /* margin: 0 auto; */
+    padding: 0 6px;
+    padding-left: 16px;
+    margin-bottom: 20px;
+}
+
+.ticketInput:focus {
+    border: 2px solid #5551ff;
+}
+
+.explainsection {
+    padding-left: min(50px, 5%);
+}
+
+.explainblock {
+    font-size: 16pt;
+}

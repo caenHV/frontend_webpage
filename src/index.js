@@ -8,6 +8,7 @@ import {
 import './index.css';
 import MainPage from './mainpage/index';
 import LogPage from './logpage/index';
+import StatusCalcPage from './statuscalc';
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
   {
     path: "/log",
     element: <LogPage />,
+  },
+  {
+    path: "/statuscalc",
+    element: <StatusCalcPage />,
   }
 ]);
 

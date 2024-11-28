@@ -58,7 +58,7 @@ function TableHeaders() {
         channel={<b>Channel</b>}
         voltage={<b>Voltage, [V]</b>}
         current={<b>Current, [μA]</b>}
-        status={<b>Status</b>}
+        status={<b><a href='/statuscalc'>Status</a></b>}
         classname="header"
     />
 }

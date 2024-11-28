@@ -2,6 +2,7 @@ import { myConfig } from '../config';
 import { MulilineChart } from './Chart.js'
 import { SystemStateTable } from './Table.js';
 import './charts.css'
+import styles from './charts.module.css'
 import { useState, useEffect } from 'react';
 
 const { origin } = myConfig[process.env.REACT_APP_CAEN];
@@ -10,7 +11,7 @@ const { last_minutes, aborttime } = myConfig[process.env.REACT_APP_CAEN].chart;
 
 export function ChartBlock() {
 
-    const [data, setData] = useState({});
+    const [data, setData] = useState([]);
     const [target, setTarget] = useState("...");
     const [loaded, setLoaded] = useState(false);
     const [lastdata, setLastdata] = useState({});
@@ -27,6 +28,7 @@ export function ChartBlock() {
             .then(response => response.json()).then(
                 response => {
                     const resp = response['response']['body'];
+                    // console.log(JSON.stringify(resp))
                     const prepdata = {};
                     for (const row of resp.slice().reverse()) {
                         const { chidx, V, I, t } = row;
@@ -42,8 +44,8 @@ export function ChartBlock() {
                             prepdata[chidx] = [point]
                         }
                         setData(prepdata);
-                        setLoaded(true);
                     }
+                    setLoaded(true);
 
                 }
             ).catch(err => {
@@ -91,18 +93,24 @@ export function ChartBlock() {
                 <MulilineChart
                     classname="multilinechart"
                     yaxis="voltage"
-                    ChartName={`Voltage (multiplier now: ${target})`}
                     suffixY="V"
                     yValueFormatString="# ##0 V"
-                    data={data} />
+                    data={data}>
+                    <p class={styles.p}>Voltage (multiplier now:&nbsp;
+                        <div class={styles.tooltip}>{target}
+                            <span class={styles.tooltiptext}> 2000 ⋅ {target} = {(2000 * target).toFixed(1)}</span>
+                        </div>)
+                    </p>
+                </MulilineChart>
                 <MulilineChart
                     classname="multilinechart"
                     yaxis="current"
-                    ChartName="Current"
                     data={data}
                     suffixY="μA"
                     yValueFormatString="# ##0.###0 μA"
-                    startOnMount />
+                    startOnMount>
+                    <p class={styles.p}>Current</p>
+                </MulilineChart>
             </div>
             <div className='table'>
                 <SystemStateTable datarows={lastdata} />

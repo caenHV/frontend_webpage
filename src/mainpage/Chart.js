@@ -16,7 +16,7 @@ const { last_minutes } = myConfig[process.env.REACT_APP_CAEN].chart;
 
 const mintime = () => { return new Date((Math.floor(Date.now() / 1000) - 60 * last_minutes) * 1000); };
 
-const MulilineChart = ({ data, classname, ChartName, suffixY, yaxis, yValueFormatString }) => {
+const MulilineChart = ({ children, data, classname, ChartName, suffixY, yaxis, yValueFormatString }) => {
 	const [options, setOptions] = useState({
 		culture: "ru",
 		zoomEnabled: true,
@@ -69,7 +69,7 @@ const MulilineChart = ({ data, classname, ChartName, suffixY, yaxis, yValueForma
 
 	return (
 		<div className={classname}>
-			<p style={{ fontSize: '20pt' }}>{ChartName}</p>
+			{children}
 			<CanvasJSChart options={options} />
 		</div>
 	);
