@@ -51,7 +51,7 @@ export function ChartBlock() {
             ).catch(err => {
                 setLoaded(true);
             });
-    }, [loaded]);
+    }, []);
 
     // Subscribe to Server sent events 
     useEffect(() => {
